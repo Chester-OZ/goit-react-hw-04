@@ -17,6 +17,12 @@
   width: 320px;
   border: 1px solid lightgray;
   border-radius: 4px;
+  caret-color: lightgray;
+}
+
+.form input:hover,
+.form input:focus {
+  box-shadow: 5px 3px 10px rgb(235, 235, 235);
 }
 
 .form input::placeholder {
@@ -33,4 +39,8 @@
   height: 32px;
   color: lightgray;
   background-color: inherit;
+}
+
+.form svg:hover {
+  color: rgb(199, 199, 199);
 }

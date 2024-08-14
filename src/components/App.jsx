@@ -12,28 +12,51 @@ export default function App() {
   const [images, setImages] = useState([])
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState(false)
+  const [page, setPage] = useState(1)
+  const [query, setQuery] = useState('')
+
+  useEffect(() => {
+    if (!query) {
+      return
+    }
+
+    async function getData() {
+      try {
+        setIsLoading(true)
+        setError(false)
+        const data = await fetchImages(query, page)
+        setImages((prev) => {
+          return [...prev, ...data]
+        })
+      } catch (error) {
+        setError(true)
+      } finally {
+        setIsLoading(false)
+      }
+    }
+
+    getData()
+  }, [page, query])
 
   const handleSearch = async (newQuery) => {
-    try {
-      setImages([])
-      setError(false)
-      setIsLoading(true)
-      const data = await fetchImages(newQuery)
-      setImages(data)
-    } catch (error) {
-      setError(true)
-    } finally {
-      setIsLoading(false)
-    }
+    setQuery(newQuery)
+    setPage(1)
+    setImages([])
+  }
+
+  const handleLoadMore = () => {
+    setPage(page + 1)
   }
   return (
     <div>
       <SearchBar onSearch={handleSearch} />
-      {isLoading && <Loader isLoading={isLoading} />}
       {error && <ErrorMessage>Please, reload the page</ErrorMessage>}
       {images.length > 0 && <ImageGallery images={images} />}
-      <LoadMoreBtn />
+      {images.length > 0 && !isLoading && (
+        <LoadMoreBtn onClick={handleLoadMore}>Lode more</LoadMoreBtn>
+      )}
       <ImageModal />
+      {isLoading && <Loader isLoading={isLoading} />}
     </div>
   )
 }
