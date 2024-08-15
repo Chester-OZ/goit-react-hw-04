@@ -15,9 +15,11 @@
   outline: none;
   padding: 6px 12px;
   width: 320px;
-  border: 1px solid lightgray;
+  height: 100%;
+  color: #d3d3d3;
+  border: 1px solid #d3d3d3;
   border-radius: 4px;
-  caret-color: lightgray;
+  caret-color: #d3d3d3;
 }
 
 .form input:hover,
@@ -34,10 +36,11 @@
   display: flex;
   align-items: center;
   border: none;
+  outline: none;
   padding: 4px;
   width: 32px;
   height: 32px;
-  color: lightgray;
+  color: #d3d3d3;
   background-color: inherit;
 }
 

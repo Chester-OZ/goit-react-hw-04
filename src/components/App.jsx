@@ -6,14 +6,22 @@ import ImageModal from './ImageModal/ImageModal'
 import Loader from './Loader/Loader'
 import LoadMoreBtn from './LoadMoreBtn/LoadMoreBtn'
 import SearchBar from './SearchBar/SearchBar'
-import { fetchImages } from '../api/unsplash'
+import fetchImages from '../api/unsplash'
 
 export default function App() {
+  const isModalState = {
+    isShow: false,
+    url: '',
+    alt: '',
+  }
+
   const [images, setImages] = useState([])
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState(false)
   const [page, setPage] = useState(1)
   const [query, setQuery] = useState('')
+  const [modalData, setModalData] = useState(isModalState)
+  const [totalPages, setTotalPages] = useState()
 
   useEffect(() => {
     if (!query) {
@@ -24,19 +32,20 @@ export default function App() {
       try {
         setIsLoading(true)
         setError(false)
-        const data = await fetchImages(query, page)
-        setImages((prev) => {
-          return [...prev, ...data]
+        const { results, totalPages } = await fetchImages(query, page)
+        setImages((prevImages) => {
+          return [...prevImages, ...results]
         })
+        setTotalPages(totalPages)
       } catch (error) {
-        setError(true)
+        setError(error)
       } finally {
         setIsLoading(false)
       }
     }
 
     getData()
-  }, [page, query])
+  }, [query, page])
 
   const handleSearch = async (newQuery) => {
     setQuery(newQuery)
@@ -45,18 +54,38 @@ export default function App() {
   }
 
   const handleLoadMore = () => {
-    setPage(page + 1)
+    setPage((prevPage) => prevPage + 1)
   }
+
+  const openModal = (url, alt) => {
+    setModalData({
+      isShow: true,
+      url,
+      alt,
+    })
+  }
+
+  const closeModal = () => {
+    setModalData(isModalState)
+  }
+
   return (
     <div>
       <SearchBar onSearch={handleSearch} />
       {error && <ErrorMessage>Please, reload the page</ErrorMessage>}
-      {images.length > 0 && <ImageGallery images={images} />}
-      {images.length > 0 && !isLoading && (
+      {images.length > 0 && (
+        <ImageGallery images={images} openModal={openModal} />
+      )}
+      {images.length > 0 && !isLoading && page < totalPages && (
         <LoadMoreBtn onClick={handleLoadMore}>Lode more</LoadMoreBtn>
       )}
-      <ImageModal />
       {isLoading && <Loader isLoading={isLoading} />}
+      <ImageModal
+        onCloseModal={closeModal}
+        isOpen={modalData.isShow}
+        modalUrl={modalData.url}
+        modalAlt={modalData.alt}
+      />
     </div>
   )
 }

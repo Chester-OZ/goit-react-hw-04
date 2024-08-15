@@ -1,22 +1,25 @@
 import axios from 'axios'
 
-const ACCESS_KEY = 'Y3fYvsyJcrdRWSwXjgy-bOFjMNdRn_LXKUDe3tj9Ly8'
+const ACCESS_KEY = import.meta.env.VITE_ACCESS_KEY
 
-axios.defaults.baseURL = 'https://api.unsplash.com'
-axios.defaults.headers.common = {
-  Authorization: `Client-ID ${ACCESS_KEY}`,
-  'Accept-Version': 'v1',
-}
+const apiClient = axios.create({
+  baseURL: 'https://api.unsplash.com',
+  headers: {
+    Authorization: `Client-ID ${ACCESS_KEY}`,
+    'Accept-Version': 'v1',
+  },
+})
 
-export const fetchImages = async (query, pages) => {
-  const response = await axios.get('/search/photos', {
+export default async function fetchImages(query, page) {
+  const response = await apiClient.get('/search/photos', {
     params: {
       query,
-      pages,
+      page,
       per_page: 12,
       orientation: 'landscape',
     },
   })
 
-  return response.data.results
+  const { results: results, total_pages: totalPages } = response.data
+  return { results, totalPages }
 }

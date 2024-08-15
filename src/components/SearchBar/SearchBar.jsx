@@ -3,16 +3,16 @@ import { IoIosSearch } from 'react-icons/io'
 import toast, { Toaster } from 'react-hot-toast'
 
 export default function SearchBar({ onSearch }) {
-  const notify = () =>
-    toast.error('Please enter a search query', {
-      duration: 2000,
-      position: 'top-right',
-    })
-
   const handleSubmit = (e) => {
     console.log(e)
     e.preventDefault()
     const query = e.target.elements.search.value.trim()
+
+    const notify = () =>
+      toast.error('Please enter a search query', {
+        duration: 2000,
+        position: 'top-right',
+      })
 
     if (!query) {
       return notify()
@@ -33,7 +33,7 @@ export default function SearchBar({ onSearch }) {
           placeholder="Search images and photos"
         />
         <button type="submit">
-          <IoIosSearch fontSize={32} />
+          <IoIosSearch size={32} />
         </button>
         <Toaster />
       </form>
